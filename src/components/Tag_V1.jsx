@@ -1,10 +1,35 @@
-import React from "react";
+import Axios from "axios";
+import React, { useEffect, useState } from "react";
+
+const API_KEY = process.env.REACT_APP_API_KEY;
 
 const Tag = () => {
+  const [tag, setTag] = useState("dogs");
+  const [gif, setGif] = useState("");
+
+  const fetchGif = async (tag) => {
+    const url = `https://api.giphy.com/v1/gifs/random?api_key=${API_KEY}&tag=${tag}`;
+    const { data } = await Axios.get(url);
+
+    const imgSrc = data.data.images.downsized_large.url;
+    setGif(imgSrc);
+  };
+
+  useEffect(() => {
+    fetchGif(tag);
+  }, [tag]);
+
+  const handleClick = () => {
+    fetchGif(tag);
+  };
+
   return (
-    <>
-      <h1>Tag</h1>
-    </>
+    <div className="container">
+      <h1>Random {tag} Gif</h1>
+      <img width="500" src={gif} alt="Random Gif" />
+      <input type="text" value={tag} onChange={(e) => setTag(e.target.value)} />
+      <button onClick={handleClick}>Click for NEW</button>
+    </div>
   );
 };
 
